@@ -1,56 +1,38 @@
+import pandas as pd
+import requests
+
 from Data_Catch import StockDataScraper
 from datetime import date, timedelta
-
-start_date = date(2022, 1, 3)
-end_date = date(2024, 7, 28)
-delta = timedelta(days=1)
-
-url = 'https://fubon-ebrokerdj.fbs.com.tw/z/zg/zgb/zgb0.djhtm'
-# 定義變數, 列表點選
-params = {
-    'a': '8440', # 券商代號
-    'b': '8440', # 券商分點, 無分點則與a相同
-    'c': 'B', # B 金額單位, E 張數單位
-    'e': '2024-3-12', # 起始日期
-    'f': '2024-3-12'  # 結束日期
-}
-
-# 將參數加入 URL
-url_with_params = url + '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
-print(url_with_params)
-scraper = StockDataScraper(url_with_params)
-overbought_data = scraper.get_overbought_data()
-oversell_data = scraper.get_oversell_data()
-
-print('----------買超----------')
-print(overbought_data[:5])
-print(' ')
-print('----------賣超----------')
-print(oversell_data[:5])
+from FinMind.data import DataLoader
 
 
+class BackTest:
+    def __init__(self, TOKEN, COID, START_DATE, END_DATE):
+        self.Token = TOKEN
+        self.COID = COID
+        self.START_DATE = START_DATE
+        self.END_DATE = END_DATE
+        return None
+
+    def Read_Stock_Index(self):
+        Stock_Index = pd.read_csv('Stock_Index.csv', header=None)
+        Stock_Index = Stock_Index.set_index(0)
+        Stock_Index = Stock_Index.drop(['1101B', '1312A', '1522A', '2002A', '2348A', '2836A', '2838A', '2881A', '2881B', '2881C', '2882A', '2882B', '2883B', '2887E', '2887F', '2887Z1', '2888A', '2888B', '2891B', '2891C', '2897A', '3036A', '3702A', '5871A', '6592A', '8112A', '9941A'])
+        Stock_Index = Stock_Index.reset_index()
+        return Stock_Index
+    def Price_Catch(self, COID, USER_ID, PASSWORD):
+        api = DataLoader()
+        api.login(user_id=USER_ID, password=PASSWORD)
+        data = api.taiwan_stock_daily(
+            stock_id=COID,
+            start_date="2000-01-01",
+            end_date="2020-12-31"
+        )
+        df = pd.DataFrame(
+            data
+        )
+        print("資料寫入成功")
+        return None
 
 
 
-'''
-options_list = [
-    ("8890", "大和國泰"),
-    ("9800", "元大"),
-    ("8150", "台新"),
-    ("1470", "台灣摩根士丹利"),
-    ("9A00", "永豐金"),
-    ("7000", "兆豐"),
-    ("1020", "合庫"),
-    ("5260", "美好"),
-    ("1440", "美林"),
-    ("1480", "美商高盛"),
-    ("8960", "香港上海匯豐"),
-    ("8880", "國泰"),
-    ("5380", "第一金"),
-    ("5850", "統一"),
-    ("9200", "凱基"),
-    ("9600", "富邦"),
-    ("1650", "新加坡商瑞銀"),
-    ("8440", "摩根大通"),
-]
-'''
