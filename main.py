@@ -1,6 +1,7 @@
-from Data_Catch import StockDataScraper
+from Data_Catch import ChipDataScraper
+from Data_Catch import PriceDataScraper
 
-# Example usage:
+'''# Example usage:
 url = 'https://fubon-ebrokerdj.fbs.com.tw/z/zg/zgb/zgb0.djhtm'
 # 定義變數, 列表點選
 params = {
@@ -12,17 +13,27 @@ params = {
 }
 
 # 將參數加入 URL
-url_with_params = url + '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
-print(url_with_params)
-scraper = StockDataScraper(url_with_params)
-overbought_data = scraper.get_overbought_data()
-oversell_data = scraper.get_oversell_data()
+url= url + '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
+print(url)
+scraper = ChipDataScraper(url)
+overbought_data = scraper.get_overbought_data() # 買超資料
+oversell_data = scraper.get_oversell_data() # 賣超資料
 
 print('----------買超----------')
 print(overbought_data[:5])
 print(' ')
 print('----------賣超----------')
-print(oversell_data[:5])
+print(oversell_data[:5])'''
+
+'''USER_ID = ""
+PASSWORD = ""
+COID = "2330"
+START_DATE = "2022-03-24"
+END_DATE = "2022-03-30"
+
+Scraper = PriceDataScraper(USER_ID, PASSWORD, COID, START_DATE, END_DATE)
+print_df = Scraper.price_catch()
+print(print_df)'''
 
 
 
