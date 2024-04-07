@@ -1,29 +1,46 @@
+import datetime
+import time
 from Data_Catch import ChipDataScraper
 from Data_Catch import PriceDataScraper
 
-'''# Example usage:
-url = 'https://fubon-ebrokerdj.fbs.com.tw/z/zg/zgb/zgb0.djhtm'
-# 定義變數, 列表點選
-params = {
-    'a': '8440', # 券商代號
-    'b': '8440', # 券商分點, 無分點則與a相同
-    'c': 'B', # B 金額單位, E 張數單位
-    'e': '2024-3-12', # 起始日期
-    'f': '2024-3-12'  # 結束日期
-}
 
-# 將參數加入 URL
-url= url + '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
-print(url)
-scraper = ChipDataScraper(url)
-overbought_data = scraper.get_overbought_data() # 買超資料
-oversell_data = scraper.get_oversell_data() # 賣超資料
+if __name__ == '__main__':
+    # Example usage:
+    start_date = datetime.date(2022, 1, 1)
+    end_date = datetime.date(2024, 12, 31)
 
-print('----------買超----------')
-print(overbought_data[:5])
-print(' ')
-print('----------賣超----------')
-print(oversell_data[:5])'''
+    current_date = start_date
+    while current_date <= end_date:
+        formatted_date = current_date.strftime('%Y-%#m-%#d') # 2022-01-01 > 2022-1-1
+        print(formatted_date)
+
+        #今天日期
+        url = 'https://fubon-ebrokerdj.fbs.com.tw/z/zg/zgb/zgb0.djhtm'
+        # 定義變數, 列表點選
+        params = {
+            'a': '8440',  # 券商代號
+            'b': '8440',  # 券商分點, 無分點則與a相同
+            'c': 'B',  # B 金額單位, E 張數單位
+            'e': formatted_date,  # 起始日期
+            'f': formatted_date  # 結束日期
+        }
+        # 將參數加入 URL
+        url = url + '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
+        # print(url)
+        scraper = ChipDataScraper(url)
+        overbought_data = scraper.get_overbought_data()  # 買超資料
+        oversell_data = scraper.get_oversell_data()  # 賣超資料
+        if not overbought_data.empty and not oversell_data.empty:
+            print('----------買超----------')
+            print(overbought_data[:5])
+            print(' ')
+            print('----------賣超----------')
+            print(oversell_data[:5])
+
+        # 下一天
+        time.sleep(5)
+        current_date += datetime.timedelta(days=1)
+
 
 '''USER_ID = ""
 PASSWORD = ""

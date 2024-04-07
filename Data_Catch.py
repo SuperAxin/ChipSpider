@@ -19,28 +19,31 @@ class ChipDataScraper:
         return soup
 
     def extract_table_data(self, table_index): # table_index[買超:3, 賣超:4]
-        soup = self.fetch_data()
-        table = soup.find_all('table')[table_index].find_all('tr')[2:]
-        extracted_data = []
+        df = None
+        try:
+            soup = self.fetch_data()
+            table = soup.find_all('table')[table_index].find_all('tr')[2:]
+            extracted_data = []
 
-        for tr in table:
-            data = []
-            for td in tr:
-                if str(td).isspace() == False:
-                    pattern_com = r'(?:Link2Stk\(\'([\w\d]+)\'\);|GenLink2stk\(\'.*?\',\'(.*?)\'\);|>(-?\d{1,3}(?:,\d{3})*(?:\.\d+)?)<\/td>)'
-                    matche_com = re.findall(pattern_com, str(td))
-                    for match in matche_com:
-                        result = [group for group in match if group]
-                        if result:
-                            data.append(result[0])
-            extracted_data.append(data)
+            for tr in table:
+                data = []
+                for td in tr:
+                    if str(td).isspace() == False:
+                        pattern_com = r'(?:Link2Stk\(\'([\w\d]+)\'\);|GenLink2stk\(\'.*?\',\'(.*?)\'\);|>(-?\d{1,3}(?:,\d{3})*(?:\.\d+)?)<\/td>)'
+                        matche_com = re.findall(pattern_com, str(td))
+                        for match in matche_com:
+                            result = [group for group in match if group]
+                            if result:
+                                data.append(result[0])
+                extracted_data.append(data)
 
-        # Convert extracted data to DataFrame
-        df = pd.DataFrame(extracted_data)
+            # Convert extracted data to DataFrame
+            df = pd.DataFrame(extracted_data)
 
-        # Set column headers
-        df.columns = ['公司名稱', '買入', '賣出', '差額']
-
+            # Set column headers
+            df.columns = ['公司名稱', '買入', '賣出', '差額']
+        except:
+            print("本日無開盤")
         return df
 
     def get_overbought_data(self):
