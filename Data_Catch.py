@@ -111,8 +111,8 @@ class PriceDataScraper: # 直接在本地建立資料庫, 再調用價格資料
 USER_ID = "koko635241@yahoo.com.tw"
 PASSWORD = "Finmind072"
 COID = "2330"
-START_DATE = "2022-03-24"
-END_DATE = "2022-03-30"
+START_DATE = "2000-03-24"
+END_DATE = "2024-03-29"
 
 Scraper = PriceDataScraper(USER_ID, PASSWORD, START_DATE, END_DATE)
 folder = Scraper.create_folder()
