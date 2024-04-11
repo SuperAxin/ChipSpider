@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 
 class Portfolio:
@@ -5,14 +6,22 @@ class Portfolio:
         # 初始化表格
         self.df = pd.DataFrame(columns=['Symbol', 'Name', 'Shares', 'Purchase_Price', 'Purchase_Date', 'Current_Price', 'Total_Value', 'Current_Value', 'Profit'])
         self.capital = capital
+
     def display_structure(self):
         # 顯示DataFrame結構
         print(self.df)
         print(self.capital)
+
+    def price_scraper(self, DATE, COID, TYPE): #　('2000-03-27', '1101', [_open,_max,_min,_close])
+        os.chdir('Price_Data') # 切換至 price_data 資料夾
+        df = pd.read_csv( COID + '.csv')
+        price = df.loc[df['date'] == DATE, TYPE].values[0]
+        os.chdir(os.pardir)
+        return price
     def update_current_price(self, now_date):
         # 更新current_price
-
         print(None)
+
     def buy(self, symbol, name, shares, purchase_price, purchase_date, current_price):
         # 購買股票
         total_value = shares * purchase_price
@@ -27,10 +36,9 @@ class Portfolio:
             self.capital = self.capital - total_value
         else:
             print("餘額不足")
+
     def sell(self, symbol, shares_to_sell, current_price):
         # 出售股票
-
-
         idx = self.df.index[self.df['Symbol'] == symbol].tolist()
         if not idx:
             print("Stock symbol not found in portfolio.")
@@ -51,10 +59,15 @@ class Portfolio:
         if self.df.at[idx, 'Shares'] == 0:
             self.df.drop(idx, inplace=True)
 
-'''
+
+
 # Portfolio example
 capital = 1000000
 portfolio = Portfolio(capital)
+
+# 價格抓取
+price = portfolio.price_scraper('2000-03-27', '1101', 'open')
+print(price)
 
 # 買入 symbol, name, shares, purchase_price, purchase_date, current_price
 portfolio.buy('AAPL', 'Apple Inc.', 100, 150.25, '2022-01-01', 151.50)
@@ -64,4 +77,3 @@ portfolio.display_structure()
 # 賣出 symbol, shares_to_sell, current_price
 portfolio.sell('GOOG', 50, 180.75)
 portfolio.display_structure()
-'''

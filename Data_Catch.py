@@ -79,10 +79,6 @@ class PriceDataScraper: # 直接在本地建立資料庫, 再調用價格資料
         os.chdir('Price_Data')
         current_directory = os.getcwd()
         print("Current working directory:", current_directory)
-
-        os.chdir(os.pardir) # 返回上一層
-        current_directory = os.getcwd()
-        print("Current working directory:", current_directory)
         return None
 
     def price_catch(self):

@@ -3,6 +3,7 @@ import time
 from Data_Catch import ChipDataScraper
 from Data_Catch import PriceDataScraper
 
+ # 抓價格,
 
 if __name__ == '__main__':
     # Example usage:
