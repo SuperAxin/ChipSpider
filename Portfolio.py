@@ -61,7 +61,7 @@ class Portfolio:
 
 
 
-# Portfolio example
+'''# Portfolio example
 capital = 1000000
 portfolio = Portfolio(capital)
 
@@ -76,4 +76,4 @@ portfolio.display_structure()
 
 # 賣出 symbol, shares_to_sell, current_price
 portfolio.sell('GOOG', 50, 180.75)
-portfolio.display_structure()
+portfolio.display_structure()'''

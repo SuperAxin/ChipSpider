@@ -1,43 +1,35 @@
 import datetime
 import time
+import pandas as pd
+from Data_Catch import options_list
 from Data_Catch import ChipDataScraper
 from Data_Catch import PriceDataScraper
 
- # 抓價格,
 
 if __name__ == '__main__':
     # Example usage:
-    start_date = datetime.date(2022, 1, 1)
+    start_date = datetime.date(2022, 1, 3)
     end_date = datetime.date(2024, 12, 31)
-
     current_date = start_date
+    merged_data = pd.DataFrame()
+
     while current_date <= end_date:
-        formatted_date = current_date.strftime('%Y-%#m-%#d') # 2022-01-01 > 2022-1-1
-        print(formatted_date)
-
         #今天日期
-        url = 'https://fubon-ebrokerdj.fbs.com.tw/z/zg/zgb/zgb0.djhtm'
-        # 定義變數, 列表點選
-        params = {
-            'a': '8440',  # 券商代號
-            'b': '8440',  # 券商分點, 無分點則與a相同
-            'c': 'B',  # B 金額單位, E 張數單位
-            'e': formatted_date,  # 起始日期
-            'f': formatted_date  # 結束日期
-        }
-        # 將參數加入 URL
-        url = url + '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
-        # print(url)
-        scraper = ChipDataScraper(url)
-        overbought_data = scraper.get_overbought_data()  # 買超資料
-        oversell_data = scraper.get_oversell_data()  # 賣超資料
-        if not overbought_data.empty and not oversell_data.empty:
-            print('----------買超----------')
-            print(overbought_data[:5])
-            print(' ')
-            print('----------賣超----------')
-            print(oversell_data[:5])
-
+        formatted_date = current_date.strftime('%Y-%#m-%#d') # 2022-01-01 > 2022-1-1
+        print('今天是' + formatted_date)
+        keys_list = [key for key, _ in options_list]
+        for SEL_BROKER in keys_list:
+            scraper = ChipDataScraper(SEL_BROKER, 'B', formatted_date) # ('8440', ['B', 'C'], 2022-1-1) 第二格中: B 金額單位, E 張數單位
+            overbought_data = scraper.get_overbought_data()  # 獲得買超資料
+            merged_data = pd.concat([merged_data, overbought_data[0:6]])
+            if not overbought_data.empty:
+                print('----------' + SEL_BROKER + '買超----------')
+                #print(overbought_data[:5])
+                #print(' ')
+            time.sleep(3)
+        merged_data.to_csv("Test.csv")
+        print("合併之後的數據")
+        print(merged_data)
         # 下一天
         time.sleep(5)
         current_date += datetime.timedelta(days=1)
@@ -57,25 +49,3 @@ print(print_df)'''
 
 
 
-'''
-options_list = [
-    ("8890", "大和國泰"),
-    ("9800", "元大"),
-    ("8150", "台新"),
-    ("1470", "台灣摩根士丹利"),
-    ("9A00", "永豐金"),
-    ("7000", "兆豐"),
-    ("1020", "合庫"),
-    ("5260", "美好"),
-    ("1440", "美林"),
-    ("1480", "美商高盛"),
-    ("8960", "香港上海匯豐"),
-    ("8880", "國泰"),
-    ("5380", "第一金"),
-    ("5850", "統一"),
-    ("9200", "凱基"),
-    ("9600", "富邦"),
-    ("1650", "新加坡商瑞銀"),
-    ("8440", "摩根大通"),
-]
-'''

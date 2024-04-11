@@ -6,8 +6,42 @@ import os
 from bs4 import BeautifulSoup
 from FinMind.data import DataLoader
 
+
+options_list = [
+    ("8890", "大和國泰"),
+    ("9800", "元大"),
+    ("8150", "台新"),
+    ("1470", "台灣摩根士丹利"),
+    ("9A00", "永豐金"),
+    ("7000", "兆豐"),
+    ("1020", "合庫"),
+    ("5260", "美好"),
+    ("1440", "美林"),
+    ("1480", "美商高盛"),
+    ("8960", "香港上海匯豐"),
+    ("8880", "國泰"),
+    ("5380", "第一金"),
+    ("5850", "統一"),
+    ("9200", "凱基"),
+    ("9600", "富邦"),
+    ("1650", "新加坡商瑞銀"),
+    ("8440", "摩根大通"),
+]
+
+
 class ChipDataScraper:
-    def __init__(self, url):
+    def __init__(self, SEL_BROKER, TYPE, DATE):
+        url = 'https://fubon-ebrokerdj.fbs.com.tw/z/zg/zgb/zgb0.djhtm'
+        # 定義變數, 列表點選
+        params = {
+            'a': SEL_BROKER,  # 券商代號
+            'b': SEL_BROKER,  # 券商分點, 無分點則與a相同
+            'c': TYPE,  # B 金額單位, E 張數單位
+            'e': DATE,  # 起始日期
+            'f': DATE  # 結束日期
+        }
+        # 將參數加入 URL
+        url = url + '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
         self.url = url
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
@@ -43,6 +77,8 @@ class ChipDataScraper:
 
             # Set column headers
             df.columns = ['公司名稱', '買入', '賣出', '差額']
+
+            df[['買入', '賣出', '差額']] = df[['買入', '賣出', '差額']].apply(lambda x: x.str.replace(',', '').astype(int))
         except:
             print("本日無開盤")
         return df
@@ -104,7 +140,7 @@ class PriceDataScraper: # 直接在本地建立資料庫, 再調用價格資料
         os.chdir(os.pardir) # 返回上一層資料夾
         return None
 
-USER_ID = "koko635241@yahoo.com.tw"
+'''USER_ID = "koko635241@yahoo.com.tw"
 PASSWORD = "Finmind072"
 COID = "2330"
 START_DATE = "2000-03-24"
@@ -113,7 +149,7 @@ END_DATE = "2024-03-29"
 Scraper = PriceDataScraper(USER_ID, PASSWORD, START_DATE, END_DATE)
 folder = Scraper.create_folder()
 folder = Scraper.price_catch()
-
+'''
 
 
 
