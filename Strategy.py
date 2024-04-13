@@ -9,39 +9,14 @@ TAIWAN_50 = {
     "成交價": [52.56, 4.7, 4.44, 1.93, 1.83, 1.65, 1.55, 1.47, 1.4, 1.28, 1.23, 1.21, 1.08, 0.99, 0.98, 0.96, 0.94, 0.84, 0.82, 0.8, 0.79, 0.74, 0.72, 0.7, 0.67, 0.67, 0.66, 0.65, 0.65, 0.64, 0.63, 0.59, 0.58, 0.57, 0.57, 0.56, 0.56, 0.55, 0.54, 0.51, 0.51, 0.48, 0.47, 0.46, 0.42, 0.41, 0.39, 0.33, 0.26, 0.22]
 }
 
-TAIWAN_ETF = ['元大台灣50', '00893', '006208', '00715L', '00850', '00881', '00891', '00631L', '00708L', '00892', '00692', '00757', '00876', '00896', '00888', '00632R', '00738U', '00901', '00875', '00717', '00878', '00673R', '00663L', '00640L', '00900', '00701', '00720B', '00740B', '00934', '00664R', '00936', '00713', '00772B', '00907', '00885', '00935', '00679B', '00761B', '00687B', '00919', '00929', '00746B', '00751B', '00924', '00731', '00662', '00932', '01007T', '00923', '00730']
-
-TAIWAN_CO = ['1101B', '1312A', '1522A', '2002A', '2348A', '2836A', '2838A', '2881A', '2881B', '2881C', '2882A', '2882B', '2883B', '2887E', '2887F', '2887Z1', '2888A', '2888B', '2891B', '2891C', '2897A', '3036A', '3702A', '5871A', '6592A', '8112A', '9941A']
-df_50 = pd.DataFrame(TAIWAN_50)
-
-Stock_Index = pd.read_csv('Test.csv', header=None)
-print(Stock_Index)
-Stock_Index = Stock_Index.set_index(0)
-for i in TAIWAN_50['公司名稱']:
-    try:
-        Stock_Index = Stock_Index.drop(i)
-    except:
-        print(i + "列表中無此公司")
-
-for i in TAIWAN_ETF:
-    try:
-        Stock_Index = Stock_Index.drop(i)
-    except:
-        print(i + "列表中無此公司")
-
-for i in TAIWAN_CO:
-    try:
-        Stock_Index = Stock_Index.drop(i)
-    except:
-        print(i + "列表中無此公司")
-Stock_Index = Stock_Index.reset_index()
-Stock_Index.to_csv('Print.csv')
-print(Stock_Index)
+Preferred_Stock = ['1101B', '1312A', '1522A', '2002A', '2348A', '2836A', '2838A', '2881A', '2881B', '2881C', '2882A', '2882B', '2883B', '2887E', '2887F', '2887Z1', '2888A', '2888B', '2891B', '2891C', '2897A', '3036A', '3702A', '5871A', '6592A', '8112A', '9941A']
 
 class Strategy_1: # 不看外資, 去除權值股, 計算市值過大的去除, 找尋投信大量買入中小型股
     def __init__(self, df):
+        self.ETF_Index = pd.read_csv('ETF_index.csv', header=None)
+        self.ETF_Index = self.ETF_Index[0]
         self.df = df
-    def remove_taiwan_50(self): #　去除權值股
+    def remove_data(self): #　去除權值股, ETF, 特別股
         self.df = self.df.set_index(0)
         print(self.df)
         for COMPANY in TAIWAN_50['公司名稱']:
@@ -49,7 +24,19 @@ class Strategy_1: # 不看外資, 去除權值股, 計算市值過大的去除, 
                 self.df = self.df.drop(COMPANY)
             except:
                 print(COMPANY + "列表中無此公司")
-        df = self.df.reset_index()
-        print(Stock_Index)
+        for COMPANY in self.ETF_Index:
+            try:
+                self.df = self.df.drop(COMPANY)
+            except:
+                print(COMPANY + "列表中無此公司")
+        for COMPANY in Preferred_Stock:
+            try:
+                self.df = self.df.drop(COMPANY)
+            except:
+                print(COMPANY + "列表中無此公司")
+
+        df = self.df
+
         return df
+
 
