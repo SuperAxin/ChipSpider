@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+import os
 
 TAIWAN_50 = {
     "股票代號": ["2330", "2454", "2317", "2382", "2308", "2303", "2891", "3711", "2881", "2412", "2886", "2882", "2884", "2885", "1216", "3034", "3231", "2357", "2002", "1303", "2892", "5880", "2379", "1301", "2890", "3037", "5871", "2327", "2345", "3008", "2880", "2301", "2883", "1101", "2887", "2207", "6669", "3661", "4938", "1326", "3045", "5876", "2603", "2395", "1590", "2912", "4904", "2801", "6505", "2408"],
@@ -9,7 +10,7 @@ TAIWAN_50 = {
     "成交價": [52.56, 4.7, 4.44, 1.93, 1.83, 1.65, 1.55, 1.47, 1.4, 1.28, 1.23, 1.21, 1.08, 0.99, 0.98, 0.96, 0.94, 0.84, 0.82, 0.8, 0.79, 0.74, 0.72, 0.7, 0.67, 0.67, 0.66, 0.65, 0.65, 0.64, 0.63, 0.59, 0.58, 0.57, 0.57, 0.56, 0.56, 0.55, 0.54, 0.51, 0.51, 0.48, 0.47, 0.46, 0.42, 0.41, 0.39, 0.33, 0.26, 0.22]
 }
 
-Preferred_Stock = ['1101B', '1312A', '1522A', '2002A', '2348A', '2836A', '2838A', '2881A', '2881B', '2881C', '2882A', '2882B', '2883B', '2887E', '2887F', '2887Z1', '2888A', '2888B', '2891B', '2891C', '2897A', '3036A', '3702A', '5871A', '6592A', '8112A', '9941A']
+Preferred_and_Bond = ['元大台灣50', '元大高股息', '00720B', '00740B', '00772B', '00679B', '00761B', '00687B', '00746B', '00751B', '01007T', '1101B', '1312A', '1522A', '2002A', '2348A', '2836A', '2838A', '2881A', '2881B', '2881C', '2882A', '2882B', '2883B', '2887E', '2887F', '2887Z1', '2888A', '2888B', '2891B', '2891C', '2897A', '3036A', '3702A', '5871A', '6592A', '8112A', '9941A']
 
 class Strategy_1: # 不看外資, 去除權值股, 計算市值過大的去除, 找尋投信大量買入中小型股
     def __init__(self, df):
@@ -17,8 +18,8 @@ class Strategy_1: # 不看外資, 去除權值股, 計算市值過大的去除, 
         self.ETF_Index = self.ETF_Index[0]
         self.df = df
     def remove_data(self): #　去除權值股, ETF, 特別股
-        self.df = self.df.set_index(0)
-        print(self.df)
+        self.df = self.df.set_index('公司名稱')
+        # print(self.df)
         for COMPANY in TAIWAN_50['公司名稱']:
             try:
                 self.df = self.df.drop(COMPANY)
@@ -29,7 +30,7 @@ class Strategy_1: # 不看外資, 去除權值股, 計算市值過大的去除, 
                 self.df = self.df.drop(COMPANY)
             except:
                 print(COMPANY + "列表中無此公司")
-        for COMPANY in Preferred_Stock:
+        for COMPANY in Preferred_and_Bond:
             try:
                 self.df = self.df.drop(COMPANY)
             except:
@@ -38,5 +39,35 @@ class Strategy_1: # 不看外資, 去除權值股, 計算市值過大的去除, 
         df = self.df
 
         return df
+
+    def price_scraper(self, DATE, COID, TYPE): #　('2000-03-27', '1101', [_open,_max,_min,_close])
+        os.chdir('Price_Data') # 切換至 price_data 資料夾
+        df = pd.read_csv( COID + '.csv')
+        price = df.loc[df['date'] == DATE, TYPE].values[0]
+        os.chdir(os.pardir)
+        return price
+
+    def name_to_index(self, name):
+        df = pd.read_csv('Stock_Index.csv', header=None)
+        info = df[df[1] == name]
+        return info.iloc[0][0]
+
+    def market_value(self): # 新增市值欄位
+        return None
+
+DATE = '2024-01-03'
+COID = '1103'
+TYPE = 'open'
+NAME = '智原'
+df = pd.read_csv('Test.csv')
+Strategy = Strategy_1(df)
+df = Strategy.remove_data()
+df.to_csv('Print.csv')
+print(df)
+
+Index = Strategy.name_to_index(NAME)
+print(Index)
+
+
 
 
