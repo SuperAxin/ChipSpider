@@ -1,14 +1,15 @@
 import datetime
 import time
 import pandas as pd
+
 from Data_Catch import options_list
 from Data_Catch import ChipDataScraper
 from Data_Catch import PriceDataScraper
 
 
 if __name__ == '__main__':
-    # Example usage:
-    start_date = datetime.date(2022, 1, 3)
+    # 籌碼抓取日期設定
+    start_date = datetime.date(2024, 1, 3)
     end_date = datetime.date(2024, 12, 31)
     current_date = start_date
     merged_data = pd.DataFrame()
@@ -21,17 +22,19 @@ if __name__ == '__main__':
         for SEL_BROKER in keys_list:
             scraper = ChipDataScraper(SEL_BROKER, 'B', formatted_date) # ('8440', ['B', 'C'], 2022-1-1) 第二格中: B 金額單位, E 張數單位
             overbought_data = scraper.get_overbought_data()  # 獲得買超資料
-            merged_data = pd.concat([merged_data, overbought_data[0:6]])
+            merged_data = pd.concat([merged_data, overbought_data])
             if not overbought_data.empty:
                 print('----------' + SEL_BROKER + '買超----------')
-                #print(overbought_data[:5])
-                #print(' ')
+                print(overbought_data)
+                print(' ')
             time.sleep(3)
+        merged_data = merged_data.groupby('公司名稱').sum() # 同公司資料合併
+        merged_data = merged_data.sort_values(by='差額', ascending=False) # 排序多到少
         merged_data.to_csv("Test.csv")
         print("合併之後的數據")
         print(merged_data)
         # 下一天
-        time.sleep(5)
+        time.sleep(10)
         current_date += datetime.timedelta(days=1)
 
 
