@@ -142,6 +142,43 @@ class PriceDataScraper: # 直接在本地建立資料庫, 再調用價格資料
         os.chdir(os.pardir) # 返回上一層資料夾
         return None
 
+class Market_Value:
+    def __init__(self, COID):
+        self.url = 'https://fubon-ebrokerdj.fbs.com.tw/Z/ZC/ZCX/ZCXFUBON_{}.djhtm'.format(COID)
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+        }
+
+    def fetch_data(self):
+        # print(self.url)
+        response = requests.get(self.url, headers=self.headers)
+        response.encoding = 'big5'
+        soup = BeautifulSoup(response.text, 'html.parser')
+        return soup
+
+    def value(self):
+        soup = self.fetch_data()
+        # print(soup)
+        table = soup.find_all('table')[1].find_all('tr')[8]
+        value = table.find_all('td')[4].text
+        value = (int(value.replace(',', '')) * 1000000 ) / 100000000 #　轉換成億
+        return value
+
+class Financial_Institutions_Scraper: # 投信買超
+    def __init__(self, date):
+        self.url = "https://www.twse.com.tw/rwd/zh/fund/TWT44U?date={}&response=json&_=1713172650296".format(date) # 20240321
+
+    def get(self):
+        response = requests.get(self.url)
+        date = response.json()
+        # print(date['data']) # 1 "證券代號" 2 "證券名稱" 3 "買進股數" 4 "賣出股數" 5 "買賣超股數"
+        return date['data']
+
+Spyder = Financial_Institutions_Scraper('20240318')
+data = Spyder.get()
+for i in data:
+    print(i)
+
 '''USER_ID = "koko635241@yahoo.com.tw"
 PASSWORD = "Finmind072"
 COID = "2330"
