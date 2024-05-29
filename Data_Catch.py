@@ -105,6 +105,7 @@ class PriceDataScraper: # 直接在本地建立資料庫, 再調用價格資料
         Stock_Index = Stock_Index.drop(['1101B', '1312A', '1522A', '2002A', '2348A', '2836A', '2838A', '2881A', '2881B', '2881C', '2882A', '2882B', '2883B', '2887E', '2887F', '2887Z1', '2888A', '2888B', '2891B', '2891C', '2897A', '3036A', '3702A', '5871A', '6592A', '8112A', '9941A'])
         Stock_Index = Stock_Index.reset_index()
         return Stock_Index
+
     def create_folder(self): #　檢查 Price_Data 資料夾是否已建立
         current_directory = os.getcwd()
         folder_name = "Price_Data"
@@ -174,13 +175,16 @@ class Financial_Institutions_Scraper: # 投信買超
         # print(date['data']) # 1 "證券代號" 2 "證券名稱" 3 "買進股數" 4 "賣出股數" 5 "買賣超股數"
         return date['data']
 
+'''
 Spyder = Financial_Institutions_Scraper('20240318')
 data = Spyder.get()
 for i in data:
     print(i)
+'''
 
-'''USER_ID = "koko635241@yahoo.com.tw"
-PASSWORD = "Finmind072"
+'''
+USER_ID = -
+PASSWORD = -
 COID = "2330"
 START_DATE = "2000-03-24"
 END_DATE = "2024-03-29"

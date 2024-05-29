@@ -15,7 +15,7 @@ if __name__ == '__main__':
     merged_data = pd.DataFrame()
 
     while current_date <= end_date:
-        #今天日期
+        # 今天日期
         formatted_date = current_date.strftime('%Y-%#m-%#d') # 2022-01-01 > 2022-1-1
         print('今天是' + formatted_date)
         keys_list = [key for key, _ in options_list]
